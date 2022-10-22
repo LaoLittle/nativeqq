@@ -1,0 +1,1 @@
+.\tars2cpp.exe --without-trace --include="tup" --tarsMaster --unjson *.tars

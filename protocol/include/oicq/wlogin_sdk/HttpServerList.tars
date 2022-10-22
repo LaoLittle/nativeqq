@@ -1,0 +1,47 @@
+
+module oicq {
+    struct SsoServerListInfo
+    {
+        1 optional string ip = "";
+        2 optional int port = 0;
+        3 optional byte linkType = 0;
+        4 optional byte proxy = 0;
+        5 optional byte protocolType = 0;
+        6 optional int timeout = 8;
+        7 optional byte loginMerge = 0;
+    };
+
+    struct HttpServerListReq
+    {
+        1  require long       uin = 0;
+        2  require long         lastTime  = 0;
+        3  require byte          linkType = 0;
+        4  require string         imsi;
+        5  require int       netType;
+        6  require long       appId;
+        7  require string imei;
+        8  require long          cellid     = 0;
+        9  require long o = 0;
+        10  require long oo = 0;
+        11  require byte ooo = 0;
+        12  require byte oooo = 0;
+        13 require long ooooo = 0;
+    };
+
+    struct HttpServerListResp
+    {
+        1  require int       result = 0;
+        2  optional vector<SsoServerListInfo> v2g3gList;
+        3  optional vector<SsoServerListInfo> wifiList;
+        4  optional int         time = 0;
+        5  optional int       secInterval = 86400;
+        6  optional byte       testSpeed = 0;
+        7  optional byte useNewList = 0;
+        8  optional int          multiConn     = 1;
+        9  optional int connFailRateWeight = 5;
+        10 optional long clientIp = 0;
+        11 optional int clientPort = 0;
+        12  optional vector<SsoServerListInfo> http2g3gList;
+        13  optional vector<SsoServerListInfo> httpWifiList;
+    };
+};
