@@ -1,2 +1,2 @@
-protobuf -- protobuf:x86-mingw-static
+-DVCPKG_TARGET_TRIPLET=x86-mingw-static
 cpp-httplib
