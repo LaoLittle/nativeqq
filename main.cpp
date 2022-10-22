@@ -13,10 +13,13 @@ using namespace tars;
 int main() {
     try {
         oicq::Oicq oicq;
-        uvw::Addr addr;
-        if (oicq::OICQ_Common::get_oicq_address(&addr, 10001, "867109044454081", 0x200302d5) == 200) {
-            printf("oicq ip: %s, port: %d\n", addr.ip.c_str(), addr.port);
-        }
+        const char* pwdMd5 = new char[16]{
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+        };
+        oicq.getStByPwd(1372362033, pwdMd5);
     } catch (exception& ex) {
         printf("err: %s\n", ex.what());
     }

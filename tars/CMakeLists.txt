@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project (nativeqq_tars)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++17 -lpthread")
+set(CMAKE_CXX_STANDARD 23)
 
 aux_source_directory(src DIR_SRCS)
 
