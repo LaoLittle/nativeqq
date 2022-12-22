@@ -109,6 +109,28 @@ public:
 
 	static TimezoneHelper   _TimeZoneHelper;
 
+    static void int64_to_bytes(unsigned char *arr, int64_t a)
+    {
+        int i = 0;
+
+        for (i = 0; i < 8; ++i)
+        {
+            arr[i] = (unsigned char)((((unsigned long long) a) >> (56 - (8*i))) & 0xFF);
+        }
+    }
+
+    static std::string randomStrGen(int length) {
+        static string charset = "abcdefghijklmnopqrstuvwxyz0123456789<>:";
+        string result;
+        result.resize(length);
+
+        srand(time(NULL));
+        for (int i = 0; i < length; i++)
+            result[i] = charset[rand() % charset.length()];
+
+        return result;
+    }
+
     /**
     * @brief  跨平台sleep
     * @brief  Cross Platform Sleep

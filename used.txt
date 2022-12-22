@@ -1,1 +1,2 @@
 https://github.com/bitcoin/bitcoin ==> crypt
+https://github.com/gityf/crc/blob/master/crc/crc32.h
