@@ -278,8 +278,6 @@ namespace tars {
             Recurse(Pack, List->BaseTree);
             List->BaseTree->Child->resize(0);
             *size = Pack.length();
-            //const char* data = Pack.topacket().c_str();
-            //std::unique_ptr<const char> out (data);
             return Pack.topacket();
         }
 
@@ -289,8 +287,7 @@ namespace tars {
             Recurse(Pack, List->BaseTree);
             List->BaseTree->Child->resize(0);
             const char* data = Pack.topacket().c_str();
-            std::vector<char> vec;
-            vec.insert(vec.end(), data, data + Pack.length());
+            std::vector<char> vec(data, data + Pack.length());
             return vec;
         }
     };

@@ -35,12 +35,13 @@ namespace ByteData {
     void _init_state(const vector<char>& key, int state[256]) {
         for(int i = 0;i < 256;i++)
             state[i] = i;
-        char _key[256];
-        for(int i = 0;i < 256;i++)
-            _key[i] = key[i % key.size()];
+        //char _key[256];
+        //for(int i = 0;i < 256;i++)
+        //    _key[i] = key[i % key.size()];
         int index = 0;
         for(int i = 0;i < 256;i++) {
-            index = (index + _key[i] + state[i]) % 256;
+            //index = (index + _key[i] + state[i]) % 256;
+            index = (index + key[i % key.size()] + state[i]) % 256;
             auto tmp = state[i];
             state[i] = state[index];
             state[index] = tmp;
@@ -92,6 +93,7 @@ namespace ByteData {
                 .Write((unsigned char*)(content.data()), content.size())
                 .Finalize(p10);
         auto p11 = _encrypt_data(key, content, content.size());
+
         uint8_t n[8] = { 0x9a, 0xd4, 0x7e, 0x38, 0x90, 0xa5, 0xeb, 0x50};
         uint8_t p12[content.length()];
         if(s20_crypt((uint8_t *)(key.data()), S20_KEYLEN_256, n, 0, p12, content.length()) == S20_SUCCESS) {
@@ -99,6 +101,7 @@ namespace ByteData {
                 p12[i] = data[i] ^ p12[i];
             }
         }
+
 
         auto outer = tars::TC_PackIn();
         outer.write("heha", 4);
@@ -112,17 +115,17 @@ namespace ByteData {
         inner << 4+8 + 4+0xa + (8 * (4+4)) + 4+32 + 4+16 + 4+16;
         _pack(&inner, 0x1, (char*) time_data, 0x8);
         _pack(&inner, 0x2, seed.data(), 0xa);
-        _pack(&inner, 0x3, new char[4]{01, 00, 00, 01}, 0x4);
-        _pack(&inner, 0x5, new char[4]{01, 00, 00, 01}, 0x4);
-        _pack(&inner, 0x4, new char[4]{00, 00, 00, 00}, 0x4);
-        _pack(&inner, 0x6, new char[4]{01, 00, 00, 04}, 0x4);
-        _pack(&inner, 0x7, new char[4]{01, 00, 00, 05}, 0x4);
-        _pack(&inner, 0x8, new char[4]{01, 00, 00, 06}, 0x4);
+        _pack(&inner, 0x3, (char*) "\u0001\u0001", 0x4);
+        _pack(&inner, 0x5, (char*) "\u0001\u0001", 0x4);
+        _pack(&inner, 0x4, (char*) "\u0000\u0000", 0x4);
+        _pack(&inner, 0x6, (char*) "\u0001\u0004", 0x4);
+        _pack(&inner, 0x7, (char*) "\u0001\u0005", 0x4);
+        _pack(&inner, 0x8, (char*) "\u0001\u0006", 0x4);
         _pack(&inner, 0x9, (char*) p10, 0x20);
         _pack(&inner, 0xa, tars::TC_MD5::md5bin(p11.data(), p11.size()).data(), 0x10);
         _pack(&inner, 0xb, tars::TC_MD5::md5bin((char *)p12, content.size()).data(), 0x10);
-        _pack(&inner, 0xc, new char[4]{01, 00, 00, 01}, 0x4);
-        _pack(&inner, 0xd, new char[4]{00, 00, 00, 00}, 0x4);
+        _pack(&inner, 0xc, (char*) "\u0001\u0001", 0x4);
+        _pack(&inner, 0xd, (char*) "\u0000\u0000", 0x4);
 
         outer << crc32(inner.getBuffer().c_str(), (int) inner.length());
         outer.write(inner.topacket().c_str(), inner.length());
