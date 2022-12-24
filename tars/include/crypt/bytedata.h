@@ -48,7 +48,7 @@ namespace ByteData {
         }
     }
 
-    vector<char> _encrypt_data(const vector<char>& key, const std::string &data, size_t dataLen) {
+    vector<char> _rc4(const vector<char>& key, const std::string &data, size_t dataLen) {
         int state[256];
         _init_state(key, state);
         int i1 = 0, i2 = 0;
@@ -75,9 +75,6 @@ namespace ByteData {
     vector<char> getByte(char* data, size_t dataLen) {
         auto seed = tars::TC_Common::randomStrGen(10);
         auto key = _gen_key(seed.c_str());
-        //char _key[256];
-        //for(int i = 0;i < 256;i++)
-        //    _key[i] = key[i % key.size()];
 
         int64_t time = tars::TC_Common::now2ms();
         unsigned char time_data[8];
@@ -92,13 +89,13 @@ namespace ByteData {
         CHMAC_SHA256((unsigned char*)(key.data()), key.size())
                 .Write((unsigned char*)(content.data()), content.size())
                 .Finalize(p10);
-        auto p11 = _encrypt_data(key, content, content.size());
+        auto p11 = _rc4(key, content, content.size());
 
         uint8_t n[8] = { 0x9a, 0xd4, 0x7e, 0x38, 0x90, 0xa5, 0xeb, 0x50};
         uint8_t p12[content.length()];
         if(s20_crypt((uint8_t *)(key.data()), S20_KEYLEN_256, n, 0, p12, content.length()) == S20_SUCCESS) {
             for(int i = 0;i < content.size();i++) {
-                p12[i] = data[i] ^ p12[i];
+                p12[i] = content[i] ^ p12[i];
             }
         }
 
