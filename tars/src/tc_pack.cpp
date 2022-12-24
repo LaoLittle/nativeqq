@@ -27,7 +27,7 @@ namespace tars
 #endif
 
 #if __BYTE_ORDER == __BIG_ENDIAN
-    #   define pack_ntohll(x)    (x)
+#   define pack_ntohll(x)    (x)
 #   define pack_htonll(x)    (x)
 #   define pack_ntohf(x)     (x)
 #   define pack_htonf(x)     (x)

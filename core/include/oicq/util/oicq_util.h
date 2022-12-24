@@ -80,6 +80,7 @@ namespace oicq {
                     (*addr).port = 8080;
                 }
             }
+            delete []tea_key;
             return status;
         }
 
