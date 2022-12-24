@@ -20,7 +20,7 @@ namespace oicq {
         std::shared_ptr<Loop> myLoop;
         std::shared_ptr<TCPHandle> client;
 
-        std::shared_ptr<uvw::TimerHandle> _interval_timer;
+        bool heartbeat_state = false;
         std::shared_ptr<uvw::TimerHandle> _internal_timer;
         std::shared_ptr<uvw::TimerHandle> _timeout_timer;
 
@@ -37,17 +37,9 @@ namespace oicq {
         /**
          * 发起链接
          */
-        void connect(const std::string& host, int port) const {
-            init();
-            client->connect(host, port);
-            runLoop();
-        }
+        void connect(const std::string& host, int port);
 
-        void connect(Addr& addr) const {
-            init();
-            client->connect(addr);
-            runLoop();
-        }
+        void connect(Addr& addr);
 
         bool isActive() {
             return client->active() && !client->closing();
