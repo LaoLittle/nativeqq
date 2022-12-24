@@ -28,37 +28,44 @@ namespace oicq {
         });
     }
 
-
     void OicqClient::init() {
-        _interval_timer = myLoop->resource<uvw::TimerHandle>();
-        _interval_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
-            _timeout_timer = myLoop->resource<uvw::TimerHandle>();
-            _timeout_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
-                // 心跳超时异常
-
-                if (_internal_timer) {
+        _timeout_timer = myLoop->resource<uvw::TimerHandle>();
+        _timeout_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
+            printf("Timeout timer triggered.\n");
+            if (!heartbeat_state) {
+                printf("Timeout YES...\n");
+                if (_internal_timer && !_internal_timer->active()) {
                     _internal_timer->stop();
                 }
-                _interval_timer->again();
-            });
-
-            _internal_timer = myLoop->resource<uvw::TimerHandle>();
-            _internal_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
-                if (
-                        // _internal_sequence < static_cast<uint8_t>(_config.packets_per_test)
-                        true // 判断是否满足心跳包条件
-                        ) {
-                    _timeout_timer->stop();
-                    _timeout_timer->start(uvw::TimerHandle::Time{2700 * 1000 + 3 * 1000}, uvw::TimerHandle::Time{0});
-                    // 重新计算超时，因为这次没有超时
-                    // _send_icmp_v4(_internal_sequence);
-                    // 发生心跳包
-                }
-            });
-
-            _timeout_timer->start(uvw::TimerHandle::Time{2700 * 1000 + 3 * 1000}, uvw::TimerHandle::Time{0});
-            _internal_timer->start(uvw::TimerHandle::Time{2700 * 1000}, uvw::TimerHandle::Time{2700 * 1000});
+            }
         });
-        _interval_timer->start(uvw::TimerHandle::Time{0}, uvw::TimerHandle::Time{2700 * 1000});
+
+        _internal_timer = myLoop->resource<uvw::TimerHandle>();
+        _internal_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
+            if (heartbeat_state)
+                heartbeat_state = false;
+            // Unknown what to do?
+            printf("Heartbeat timer trigger: %d\n", heartbeat_state);
+            if (!heartbeat_state) {
+                if (_timeout_timer && !_timeout_timer->active())
+                    _timeout_timer->stop();
+                _timeout_timer->start(uvw::TimerHandle::Time{5 * 1000}, uvw::TimerHandle::Time{0});
+                // send_heartbeat(uin...);
+                // At the receiving office, heartbeat received will be set to True...
+            }
+        });
+        _internal_timer->start(uvw::TimerHandle::Time{270 * 1000}, uvw::TimerHandle::Time{270 * 1000});
+    }
+
+    void OicqClient::connect(Addr &addr) {
+        init();
+        client->connect(addr);
+        runLoop();
+    }
+
+    void OicqClient::connect(const std::string &host, int port) {
+        init();
+        client->connect(host, port);
+        runLoop();
     }
 }

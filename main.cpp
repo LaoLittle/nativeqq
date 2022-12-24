@@ -21,7 +21,7 @@ int main() {
                 0, 0, 0, 0,
                 0, 0, 0, 0,
         };
-        oicq.getStByPwd(1372362033, pwdMd5);
+        // oicq.getStByPwd(1372362033, pwdMd5);
     } catch (exception& ex) {
         printf("err: %s\n", ex.what());
     }
