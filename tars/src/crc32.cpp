@@ -10,7 +10,6 @@
 **    Poly                       : 0xedb88320
 **    Output for "123456789"     : 0xCBF43926
 */
-#include <stdlib.h>
 #include "crypt/crc32.h"
 
 static uint32_t crc32_tab[] =

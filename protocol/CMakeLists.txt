@@ -15,4 +15,3 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} nativeqq::tars)
 
-target_link_options(${PROJECT_NAME} PRIVATE -static)

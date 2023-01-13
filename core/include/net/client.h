@@ -42,16 +42,12 @@ namespace oicq {
         void connect(Addr& addr);
 
         bool isActive() {
-            return client->active() && !client->closing();
+            return client && client->active() && !client->closing();
         }
 
         std::shared_ptr<TCPHandle>& getTcpHandle() {
             // 为接下来奇怪的操作提供可操作性
             return client;
-        }
-
-        void setIdleTime(int time) const {
-            myLoop->idleTime() = std::chrono::seconds(time);
         }
     };
 }

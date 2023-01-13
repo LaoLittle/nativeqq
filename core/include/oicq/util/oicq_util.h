@@ -27,7 +27,7 @@ namespace oicq {
          * @param lastTime
          * @return http请求错误码
          */
-         static int get_oicq_address(uvw::Addr *addr, long uin, std::string androidId, long appId, std::string imsi = "", long cid = 0, bool isWifi = false, long lastTime = 6000) {
+         static int get_oicq_address(uvw::Addr *addr, long uin, std::string androidId, long appId, std::string imsi, long cid = 0, bool isWifi = false, long lastTime = 6000) {
             HttpServerListReq httpServerListReq;
             httpServerListReq.uin = uin;
             httpServerListReq.linkType = 1;

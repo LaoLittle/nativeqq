@@ -11,5 +11,4 @@ add_library(nativeqq::tars ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} nativeqq::protocol)
 
-target_link_options(${PROJECT_NAME} PUBLIC -static)
 

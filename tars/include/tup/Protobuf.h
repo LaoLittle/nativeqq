@@ -19,7 +19,7 @@ namespace tars {
 
     class Protobuf {
     private:
-        enum class Type {
+        enum class ValueType {
             VARINT,
             BIN,
             BIN_EX,
@@ -42,7 +42,7 @@ namespace tars {
 
         struct Tree {
             VarInt Field;
-            Type Type;
+            ValueType Type;
             void *Data;
 
             std::vector<Tree> *Child;
@@ -112,16 +112,16 @@ namespace tars {
                 Length += i.Field.Length;
                 switch (i.Type)
                 {
-                    case Type::VARINT:
+                    case ValueType::VARINT:
                         Length += ((VarInt *)i.Data)->Length;
                         break;
-                    case Type::BIN:
-                    case Type::BIN_EX:
-                    case Type::LPBYTE_EX:
+                    case ValueType::BIN:
+                    case ValueType::BIN_EX:
+                    case ValueType::LPBYTE_EX:
                         Length += ((BinData *)i.Data)->LengthEx.Length;
                         Length += ((BinData *)i.Data)->Length;
                         break;
-                    case Type::TREE:
+                    case ValueType::TREE:
                     {
                         uint32_t Length_ = Calculate(&i);
                         Length += Length_;
@@ -129,10 +129,10 @@ namespace tars {
                         Length += i.Length->Length;
                     }
                         break;
-                    case Type::FIX32:
+                    case ValueType::FIX32:
                         Length += 4;
                         break;
-                    case Type::FIX64:
+                    case ValueType::FIX64:
                         Length += 8;
                         break;
                 }
@@ -147,39 +147,39 @@ namespace tars {
                 auto Tpype = (*pTree->Child)[i].Type;
                 switch (Tpype)
                 {
-                    case Type::VARINT:
+                    case ValueType::VARINT:
                         SetVarint(Pack, (VarInt *)(*pTree->Child)[i].Data);
                         delete (VarInt *)(*pTree->Child)[i].Data;
                         break;
-                    case Type::BIN:
+                    case ValueType::BIN:
                         SetVarint(Pack, &((BinData *)(*pTree->Child)[i].Data)->LengthEx);
                         Pack.write(((BinData *)(*pTree->Child)[i].Data)->Bin, ((BinData *)(*pTree->Child)[i].Data)->Length);
                         delete[](BinData *)(*pTree->Child)[i].Data;
                         break;
-                    case Type::BIN_EX:
+                    case ValueType::BIN_EX:
                         SetVarint(Pack, &((BinData *)(*pTree->Child)[i].Data)->LengthEx);
                         Pack.write(((BinData *)(*pTree->Child)[i].Data)->Bin, ((BinData *)(*pTree->Child)[i].Data)->Length);
                         delete[](((BinData *)(*pTree->Child)[i].Data)->Bin);
                         delete (BinData *)(*pTree->Child)[i].Data;
                         break;
-                    case Type::LPBYTE_EX:
+                    case ValueType::LPBYTE_EX:
                         SetVarint(Pack, &((BinData *)(*pTree->Child)[i].Data)->LengthEx);
                         Pack.write(((BinData *)(*pTree->Child)[i].Data)->Bin, ((BinData *)(*pTree->Child)[i].Data)->Length);
                         delete[](((BinData *)(*pTree->Child)[i].Data)->Bin - 4);
                         delete (BinData *)(*pTree->Child)[i].Data;
                         break;
-                    case Type::TREE:{
+                    case ValueType::TREE:{
                         SetVarint(Pack, (*pTree->Child)[i].Length);
                         Recurse(Pack, &(*pTree->Child)[i]);
                         delete (*pTree->Child)[i].Length;
                         delete (*pTree->Child)[i].Child;
                         break;
                     }
-                    case Type::FIX32:
+                    case ValueType::FIX32:
                         Pack << *(int32_t *)(*pTree->Child)[i].Data;
                         delete (int32_t *)(*pTree->Child)[i].Data;
                         break;
-                    case Type::FIX64:
+                    case ValueType::FIX64:
                         Pack << *(int64_t *)(*pTree->Child)[i].Data;
                         delete (int64_t *)(*pTree->Child)[i].Data;
                         break;
@@ -190,7 +190,7 @@ namespace tars {
         void WriteFix64(uint32_t Field, int64_t l);
 
         void StepIn(uint32_t Field) {
-            List->BaseTree->Child->emplace_back(Tree{GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH), Type::TREE});
+            List->BaseTree->Child->emplace_back(Tree{GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH), ValueType::TREE});
             List = new LinkList{&List->BaseTree->Child->back(), List};
             List->BaseTree->Child = new std::vector<Tree>;
         }
@@ -216,7 +216,7 @@ namespace tars {
 
         void writeVarint(int Field, int64_t l) {
             List->BaseTree->Child->emplace_back(Tree{
-                    GetField(Field, ProtobufStruct::ProtobufStructType::VARINT), Type::VARINT, [&] () -> VarInt * {
+                    GetField(Field, ProtobufStruct::ProtobufStructType::VARINT), ValueType::VARINT, [&] () -> VarInt * {
                         auto * Data = new VarInt;
                         Int2Varint(l,Data);
                         return Data;
@@ -226,7 +226,7 @@ namespace tars {
 
         void writeFix32(int Field, int32_t i) {
             List->BaseTree->Child->emplace_back(Tree {
-                    GetField(Field, ProtobufStruct::ProtobufStructType::FIX32), Type::FIX32, [&]() -> void *{
+                    GetField(Field, ProtobufStruct::ProtobufStructType::FIX32), ValueType::FIX32, [&]() -> void *{
                         auto *i_ = new int32_t;*i_=i;
                         return i_;
                     }()
@@ -240,7 +240,7 @@ namespace tars {
         void writeString(int Field, char* str) {
             List->BaseTree->Child->emplace_back(Tree{
                     GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH),
-                    Type::BIN_EX,
+                    ValueType::BIN_EX,
                     [&] ()-> BinData *
                     {auto * Data=new BinData;Data->Length=strlen(str);
                         Int2Varint(Data->Length,&Data->LengthEx); Data->Bin=str;return Data; }()});
@@ -249,7 +249,7 @@ namespace tars {
         void writeString(int Field, const char* str) {
             List->BaseTree->Child->emplace_back(Tree{
                     GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH),
-                    Type::BIN,
+                    ValueType::BIN,
                     [&]() -> BinData *
                     {auto * Data=new BinData;Data->Length=strlen((char*)str);
                         Int2Varint(Data->Length,&Data->LengthEx); Data->Bin=(char*)str;return Data; }()});
@@ -258,7 +258,7 @@ namespace tars {
         void writeBytes(int Field, const char* bin, uint32_t Length) {
             List->BaseTree->Child->emplace_back(Tree{
                     GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH),
-                    Type::BIN,
+                    ValueType::BIN,
                     [&]() -> BinData *
                     {auto * Data=new BinData;Data->Length=Length;Int2Varint(Data->Length,&Data->LengthEx); Data->Bin=(char*)bin;return Data; }()});
         }
@@ -266,7 +266,7 @@ namespace tars {
         void writeBytes(int Field, char* bin, uint32_t Length) {
             List->BaseTree->Child->emplace_back(Tree{
                     GetField(Field, ProtobufStruct::ProtobufStructType::LENGTH),
-                    Type::BIN_EX,
+                    ValueType::BIN_EX,
                     [&]() -> BinData *
                     {auto * Data=new BinData;Data->Length=Length;Int2Varint(Data->Length,&Data->LengthEx); Data->Bin=bin;return Data; }()});
         }

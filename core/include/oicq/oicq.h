@@ -3,12 +3,12 @@
 
 #define SUB_APPID 0x200302d5
 
-
+#include "inner/protocol.h"
 #include "net/client.h"
 
+#include "spdlog/spdlog.h"
+
 namespace oicq {
-
-
     /**
      * OICQ主类
      */
@@ -19,7 +19,7 @@ namespace oicq {
          * @param uin
          * @param pwdMd5
          */
-        void getStByPwd(long uin, const char* pwdMd5);
+        void getStByPwd(long uin, std::string pwdMd5);
 
     public:
         /**
@@ -28,6 +28,7 @@ namespace oicq {
         bool isLogin = false;
 
     protected:
+        ProtocolBase* protocol = NULL;
 
         /**
          * net发包类

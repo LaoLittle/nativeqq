@@ -10,6 +10,15 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     link_libraries(ws2_32 wsock32)
 endif()
 
+set(BUILD_UVW_SHARED_LIB OFF)
+set(BUILD_UVW_LIBS ON)
+set(USE_LIBCPP OFF)
+set(SPDLOG_BUILD_SHARED OFF)
+
+add_subdirectory(library/spdlog)
+add_subdirectory(library/uvw)
+add_subdirectory(library/cpp-httplib)
+
 add_subdirectory(core)
 add_subdirectory(tars)
 add_subdirectory(protocol)
@@ -19,8 +28,5 @@ add_executable(nativeqq main.cpp)
 target_link_libraries(${PROJECT_NAME} nativeqq::tars)
 target_link_libraries(${PROJECT_NAME} nativeqq::protocol)
 target_link_libraries(${PROJECT_NAME} nativeqq::core)
-
-target_link_options(${PROJECT_NAME} PRIVATE -static)
-
 
 message(STATUS ${PROJECT_NAME})

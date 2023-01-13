@@ -15,13 +15,7 @@ using namespace tars;
 int main() {
     try {
         oicq::Oicq oicq;
-        const char* pwdMd5 = new char[16]{
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-        };
-        // oicq.getStByPwd(1372362033, pwdMd5);
+        oicq.getStByPwd(1372362033, "123456");
     } catch (exception& ex) {
         printf("err: %s\n", ex.what());
     }
