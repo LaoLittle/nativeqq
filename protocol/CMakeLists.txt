@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project (nativeqq_protocol)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 23)
 
 #find_package(Protobuf CONFIG REQUIRED)
 
