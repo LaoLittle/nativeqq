@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "util/tc_common.h"
+#include "util/tc_pack.h"
 #include "util/tc_md5.h"
 #include "crypt/hmac_sha256.h"
 #include "crypt/salsa20.h"

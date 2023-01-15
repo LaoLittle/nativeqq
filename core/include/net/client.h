@@ -31,7 +31,6 @@ namespace oicq {
         void runLoop() const {
             myLoop->run();
         }
-
     public:
         /**
          * initiate connect
@@ -48,6 +47,8 @@ namespace oicq {
         std::shared_ptr<uvw::TCPHandle>& getTcpHandle() {
             return client;
         }
+
+        void write(const char *cmd, std::unique_ptr<char[]> data, unsigned int len);
 
         void close();
     };

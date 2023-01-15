@@ -17,6 +17,12 @@ namespace oicq {
         this->close();
     }
 
+    void OicqClient::write(const char *cmd, std::unique_ptr<char[]> data, unsigned int len) {
+
+
+
+    }
+
     void OicqClient::init() {
         client->noDelay(true);
         client->keepAlive(true, TCPHandle::Time{128});

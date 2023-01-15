@@ -12,6 +12,7 @@ namespace oicq {
     };
 
     struct Device {
+        DeviceType deviceType = DeviceType::Non;
 
     };
 }

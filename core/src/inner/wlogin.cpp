@@ -3,7 +3,6 @@
 #include "inner/wtlogin.h"
 
 #include <uvw/thread.h>
-
 #include "spdlog/spdlog.h"
 
 namespace oicq {
@@ -11,17 +10,25 @@ namespace oicq {
         SPDLOG_INFO("Start the login process.");
     }
 
-    void WloginHelper::run() {
-        // SPDLOG_INFO("Thread(WloginHelper::login) {}", uv_thread_self());
-        
+//    WloginHelper::~WloginHelper() {
+//        SPDLOG_INFO("WloginHelper ~~~~~~!");
+//    }
+
+    void WloginHelper::run(oicq::StMode mode) {
+        // Here is a new thread！
+        //SPDLOG_INFO("Thread(WloginHelper::login) {}", uv_thread_self());
+        uv_sleep(5000);
+        SPDLOG_INFO("Login service is enabled, mode: {}", (uint8_t) mode);
+        if (mode == StMode::GetStByPassword) {
+
+        }
     }
 
-    void WloginHelper::login() {
-        // Release UVW's own created thread to avoid strange bugs.
+    void WloginHelper::login(oicq::StMode mode) {
         auto loop = oicq->getLoop();
-        auto handle = loop->resource<uvw::Thread>([this](const std::shared_ptr<void>&) {
-            this->run();
+        auto req = loop->resource<uvw::WorkReq>([this, mode]() {
+            this->run(mode);
         });
-        handle->run();
+        req->queue();
     }
 }

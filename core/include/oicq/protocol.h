@@ -8,23 +8,22 @@
 namespace oicq {
     typedef DeviceType ProtocolType;
 
-    struct ProtocolBase {
+    class ProtocolBase {
+    public:
         ProtocolType type;
         long appId = 0x10;
         long subAppId;
 
-        ProtocolBase(ProtocolType type, long subAppId) {
-            this->type = type;
-            this->subAppId = subAppId;
+        ProtocolBase(ProtocolType type, long subAppId): type(type), subAppId(subAppId) {
+
         }
     };
 
-    struct Android: public ProtocolBase {
-        Android(): ProtocolBase(ProtocolType::Android, 666) {
+    class Android: public ProtocolBase {
+    public:
+        Android(): ProtocolBase(ProtocolType::Android, 0x200302d5) {
 
         }
-
-
     };
 }
 

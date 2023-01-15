@@ -13,8 +13,10 @@ using namespace tars;
 
 int main() {
     try {
+        auto aProtocol = std::make_shared<oicq::Android>();
         oicq::Oicq oicq;
-        oicq.setProtocol(oicq::ProtocolType::Linux);
+        oicq.device.deviceType = oicq::DeviceType::Android;
+        oicq.setProtocol(aProtocol);
         oicq.getStByPwd(10001, "123456");
     } catch (exception& ex) {
         printf("err: %s\n", ex.what());
