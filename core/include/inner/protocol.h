@@ -21,6 +21,7 @@ namespace oicq {
 
     struct Android: ProtocolBase {
 
+
         Android(): ProtocolBase(ProtocolType::Android, 666) {
 
         }

@@ -27,7 +27,15 @@ namespace oicq {
          * @param lastTime
          * @return http请求错误码
          */
-         static int get_oicq_address(uvw::Addr *addr, long uin, std::string androidId, long appId, std::string imsi, long cid = 0, bool isWifi = false, long lastTime = 6000) {
+         static int get_oicq_address(uvw::Addr *addr,
+                                     long uin,
+                                     std::string androidId,
+                                     long appId,
+                                     std::string imsi,
+                                     long cid = 0,
+                                     bool isWifi = false,
+                                     long lastTime = 6000
+         ) {
             HttpServerListReq httpServerListReq;
             httpServerListReq.uin = uin;
             httpServerListReq.linkType = 1;
@@ -52,17 +60,17 @@ namespace oicq {
             req_uniPacket.setServantName("HttpServerListReq");
             req_uniPacket.setFuncName("HttpServerListReq");
             req_uniPacket.put("HttpServerListReq", httpServerListReq);
-            const char* tea_key = new char[16]{-16, 68, 31, 95, -12, 45, -91, -113, -36, -9, -108, -102, -70, 98, -44, 17};
+            std::unique_ptr<char[]> tea_key(new char[16]{-16, 68, 31, 95, -12, 45, -91, -113, -36, -9, -108, -102, -70, 98, -44, 17});
             vector<char> data;
             req_uniPacket.encode(data);
-            auto encrypt = TC_Tea::encrypt(tea_key, data.data(), data.size());
+            auto encrypt = TC_Tea::encrypt(tea_key.get(), data.data(), data.size());
             httplib::Client cli("http://configsvr.msf.3g.qq.com");
             auto res = cli.Post("/configsvr/serverlist.jsp?mType=getssolist", encrypt.data(), encrypt.size(), "jce");
             int status = res->status;
             if(status == 200) {
                 auto body = res->body;
                 auto body_length = res->get_header_value<size_t>("Content-Length");
-                auto decrypt = TC_Tea::decrypt(tea_key, body.data(), body_length);
+                auto decrypt = TC_Tea::decrypt(tea_key.get(), body.data(), body_length);
                 tup::UniPacket resp_uniPacket;
                 HttpServerListResp resp;
                 resp_uniPacket.decode(decrypt.data(), decrypt.size());
@@ -80,7 +88,6 @@ namespace oicq {
                     (*addr).port = 8080;
                 }
             }
-            delete []tea_key;
             return status;
         }
 

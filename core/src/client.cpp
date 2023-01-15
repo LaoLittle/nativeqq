@@ -1,12 +1,9 @@
 #include "net/client.h"
 
+using namespace uvw;
+
 namespace oicq {
-    OicqClient::OicqClient() {
-#ifdef USE_NEW_LOOP
-        auto loop = Loop::getDefault();
-#else
-        auto loop = Loop::create();
-#endif
+    OicqClient::OicqClient(std::shared_ptr<Loop> loop) {
         auto tcp = loop->resource<TCPHandle>();
 
         // loop->stop() 【尽快】结束当前循环，下一次可以继续开启
@@ -17,19 +14,29 @@ namespace oicq {
     }
 
     OicqClient::~OicqClient()  {
-        // 优选方案：将所有handle资源关闭，关闭所有延时handle后，程序即退出
-        // 备选方案：直接释放loop(close)，程序退出
-        this->client->clear();
-        this->client->close();
-        myLoop->walk([](auto &&h){
-            if (!h.closing()) {
-                h.close();
-            }
-        });
+        this->close();
     }
 
     void OicqClient::init() {
-        _timeout_timer = myLoop->resource<uvw::TimerHandle>();
+        client->noDelay(true);
+        client->keepAlive(true, TCPHandle::Time{128});
+        client->simultaneousAccepts();
+
+        client->on<ErrorEvent>([](const ErrorEvent&, TCPHandle &) {
+
+        });
+        client->on<CloseEvent>([](const CloseEvent &, TCPHandle &) {
+
+        });
+        client->on<EndEvent>([](const EndEvent &, TCPHandle &sock) {
+
+        });
+        client->once<WriteEvent>([](const WriteEvent&, TCPHandle &handle) {
+
+        });
+
+        // TODO(waiting for a heartbeat)
+        _timeout_timer = myLoop->resource<TimerHandle>();
         _timeout_timer->on<uvw::TimerEvent>([this](const auto &, auto &) {
             printf("Timeout timer triggered.\n");
             if (!heartbeat_state) {
@@ -67,5 +74,14 @@ namespace oicq {
         init();
         client->connect(host, port);
         runLoop();
+    }
+
+    void OicqClient::close() {
+        if (isActive()) {
+            // Preferred solution: close all handle resources, and after closing all delay handles, the program will exit
+            // Alternative solution: release loop(close) directly, and the program exits
+            this->client->clear();
+            this->client->close();
+        } // if (isActive())
     }
 }
