@@ -4,6 +4,9 @@
 #include "functional"
 #include "uvw.hpp"
 
+/**
+ * Whether to create a new loop for all subsequent oicq-clients
+ */
 #define USE_NEW_LOOP false
 
 namespace oicq {
@@ -21,7 +24,7 @@ namespace oicq {
         std::shared_ptr<uvw::TimerHandle> _timeout_timer;
 
         /**
-         * 初始化一些uvw在OICQ的配置
+         * Initialize some uvw configurations in OICQ
          */
         void init();
 
@@ -31,7 +34,7 @@ namespace oicq {
 
     public:
         /**
-         * 发起链接
+         * initiate connect
          */
         void connect(const std::string& host, int port);
 
@@ -41,8 +44,8 @@ namespace oicq {
             return client && client->active() && !client->closing();
         }
 
-        std::shared_ptr<uvw::TCPHandle> getTcpHandle() {
-            // 为接下来奇怪的操作提供可操作性
+        // Provide operability for the next strange operation
+        std::shared_ptr<uvw::TCPHandle>& getTcpHandle() {
             return client;
         }
 

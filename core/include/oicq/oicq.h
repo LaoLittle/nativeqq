@@ -5,10 +5,8 @@
 
 #include <utility>
 
-#include "inner/protocol.h"
+#include "protocol.h"
 #include "net/client.h"
-
-#include "spdlog/spdlog.h"
 
 namespace oicq {
     enum class OicqState {
@@ -23,12 +21,16 @@ namespace oicq {
 
         ~Oicq();
 
-        /**
-         * Set protocol parameters
-         * @param _protocol
-         */
-        void setProtocol(std::shared_ptr<ProtocolBase>& _protocol) {
-            this->protocol = std::move(_protocol);
+        void setProtocol(ProtocolType _protocol) {
+            this->protocol = _protocol;
+        }
+
+        std::shared_ptr<OicqClient> getClient() {
+            return client;
+        }
+
+        std::shared_ptr<uvw::Loop> getLoop() {
+            return defaultLoop;
         }
 
         /**
@@ -38,6 +40,7 @@ namespace oicq {
          */
         void getStByPwd(long uin, std::string pwdMd5);
     public:
+        ProtocolType protocol = ProtocolType::Non;
         OicqState state = OicqState::NoLogin;
 
     protected:
@@ -45,8 +48,6 @@ namespace oicq {
          * All thread tasks are created here.
          */
         std::shared_ptr<uvw::Loop> defaultLoop;
-
-        std::shared_ptr<ProtocolBase> protocol;
 
         /**
          * net package class

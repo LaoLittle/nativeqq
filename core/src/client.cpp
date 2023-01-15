@@ -25,10 +25,10 @@ namespace oicq {
         client->on<ErrorEvent>([](const ErrorEvent&, TCPHandle &) {
 
         });
-        client->on<CloseEvent>([](const CloseEvent &, TCPHandle &) {
+        client->on<CloseEvent>([](const CloseEvent&, TCPHandle &) {
 
         });
-        client->on<EndEvent>([](const EndEvent &, TCPHandle &sock) {
+        client->on<EndEvent>([](const EndEvent&, TCPHandle &sock) {
 
         });
         client->once<WriteEvent>([](const WriteEvent&, TCPHandle &handle) {

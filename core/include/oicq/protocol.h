@@ -19,12 +19,12 @@ namespace oicq {
         }
     };
 
-    struct Android: ProtocolBase {
-
-
+    struct Android: public ProtocolBase {
         Android(): ProtocolBase(ProtocolType::Android, 666) {
 
         }
+
+
     };
 }
 

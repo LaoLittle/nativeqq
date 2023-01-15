@@ -2,7 +2,8 @@
 #define NATIVEQQ_DEVICE_H
 
 namespace oicq {
-    enum DeviceType {
+    enum class DeviceType {
+        Non,
         Ios, IosPAD,  // TODO
         Android, AndroidPad,
         MacOS, // TODO
