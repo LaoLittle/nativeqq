@@ -150,19 +150,6 @@ namespace tars
         static int64_t getPidMemUsed(int64_t pid, const char unit = 'M');
 
         /**
-         * 获取进程启动时间(目前linux下才有效)
-         * @param pid
-         * @return
-         */
-        static time_t getPidStartTime(int64_t pid);
-
-        /**
-         * 服务器启动时间(目前linux下才有效)
-         * @return
-         */
-        static time_t getUPTime();
-
-        /**
          * 获取系统内存信息(目前linux下才有效)
          * @param totalSize, 总内存大小
          * @param availableSize , 剩余可用内存大小

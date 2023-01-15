@@ -1,4 +1,0 @@
-该项目需要的依赖，务必导入
--DVCPKG_TARGET_TRIPLET=x86-mingw-static
-cpp-httplib
-uvw::uvw

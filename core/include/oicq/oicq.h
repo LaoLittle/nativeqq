@@ -3,36 +3,56 @@
 
 #define SUB_APPID 0x200302d5
 
+#include <utility>
 
+#include "protocol.h"
 #include "net/client.h"
 
 namespace oicq {
+    enum class OicqState {
+        NoLogin, // not logged in
+        HasToken, // Logged in successfully but not online
+        Online, // online status
+    };
 
-
-    /**
-     * OICQ主类
-     */
     class Oicq {
     public:
+        Oicq();
+
+        ~Oicq();
+
+        void setProtocol(ProtocolType _protocol) {
+            this->protocol = _protocol;
+        }
+
+        std::shared_ptr<OicqClient> getClient() {
+            return client;
+        }
+
+        std::shared_ptr<uvw::Loop> getLoop() {
+            return defaultLoop;
+        }
+
         /**
-         * 密码登录
+         * password login
          * @param uin
          * @param pwdMd5
          */
-        void getStByPwd(long uin, const char* pwdMd5);
-
+        void getStByPwd(long uin, std::string pwdMd5);
     public:
-        /**
-         * 当前对象是否已登录
-         */
-        bool isLogin = false;
+        ProtocolType protocol = ProtocolType::Non;
+        OicqState state = OicqState::NoLogin;
 
     protected:
+        /**
+         * All thread tasks are created here.
+         */
+        std::shared_ptr<uvw::Loop> defaultLoop;
 
         /**
-         * net发包类
+         * net package class
          */
-        OicqClient client;
+        std::shared_ptr<OicqClient> client;
     };
 }
 

@@ -452,48 +452,6 @@ int64_t TC_Port::getPidMemUsed(int64_t pid, const char unit)
 #endif
 }
 
-time_t TC_Port::getUPTime()
-{
-#if TARGET_PLATFORM_LINUX
-
-	string path = "/proc/uptime";
-	string data = TC_File::load2str(path);
-	vector<string> vs = TC_Common::sepstr<string>(data, " ");
-	if (vs.size() != 2)
-	{
-		return 0;
-	}
-
-	return TNOW - (time_t)(TC_Common::strto<double>(vs[0]));
-
-#else
-	return 0;
-#endif
-}
-
-time_t TC_Port::getPidStartTime(int64_t pid)
-{
-#if TARGET_PLATFORM_LINUX
-
-	string statPath = "/proc/" + TC_Common::tostr(pid) + "/stat";
-	string statData = TC_File::load2str(statPath);
-	vector<string> vs = TC_Common::sepstr<string>(statData, " ");
-	if (vs.size() < 22)
-	{
-		return 0;
-	}
-	unsigned int duration = TC_Common::strto<unsigned int>(vs[21]) / HZ;
-	time_t bootTime = getUPTime();
-	if (bootTime == 0)
-	{
-		return 0;
-	}
-	return bootTime + duration;
-#else
-	return -1;
-#endif
-}
-
 bool TC_Port::getSystemMemInfo(int64_t &totalSize, int64_t &availableSize, float &usedPercent, const char unit)
 {
 #if TARGET_PLATFORM_LINUX
