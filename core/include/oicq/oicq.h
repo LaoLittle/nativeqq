@@ -4,8 +4,9 @@
 #include "inner/userdata.h"
 #include "inner/device.h"
 #include "inner/wtlogin.h"
-#include "protocol.h"
+#include "net/packet.h"
 #include "net/client.h"
+#include "protocol.h"
 
 namespace oicq {
     class WloginHelper; // advance declaration of existence
@@ -41,13 +42,16 @@ namespace oicq {
          * @param pwdMd5
          */
         void getStByPwd(long uin, std::string pwdMd5);
+
+        void sendPacket(std::unique_ptr<oicq::ToService> toService);
+
     public:/*
          * Although I made these things public, I don't really recommend that you modify them.
          */
         /**
          * Device environment
          */
-        Device device;
+        std::shared_ptr<Device> device;
         /**
          * Protocol Type
          */
@@ -69,7 +73,6 @@ namespace oicq {
          * Do not ask
          */
         std::shared_ptr<oicq::WloginHelper> wtloginHelper;
-
 
     protected:
         /**

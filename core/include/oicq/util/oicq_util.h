@@ -29,9 +29,9 @@ namespace oicq {
          */
          static int get_oicq_address(uvw::Addr *addr,
                                      long uin,
-                                     std::string androidId,
+                                     std::string& androidId,
                                      long appId,
-                                     std::string imsi,
+                                     const char* imsi,
                                      long cid = 0,
                                      bool isWifi = false,
                                      long lastTime = 6000

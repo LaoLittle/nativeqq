@@ -22,6 +22,7 @@
 #include <map>
 #include <string>
 #include <cassert>
+#include <functional>
 #include "util/tc_ex.h"
 
 namespace tars
@@ -300,6 +301,14 @@ namespace tars
         */
         [[nodiscard]] const string& topacket() const { return _pii.topacket(); }
 
+        // topacket returns a reference, once TC Pack In is destroyed, it will cease to exist
+        // Therefore, a VECTOR is synthesized to return data that can be transferred and copied.
+        vector<char> tovector() {
+            auto str = topacket();
+            vector<char> buffer(str.begin(), str.end());
+            return buffer;
+        }
+
         /**
          * @brief  添加字符串
          * @param sBuffer
@@ -328,6 +337,26 @@ namespace tars
             return *this;
         }
 
+        TC_PackIn& writeBlockWithIntLen(const std::function<void(TC_PackIn&)>& block, int lenOffset = 0)
+        {
+            TC_PackIn packIn;
+            block(packIn);
+            auto len = (int) (lenOffset + packIn.length());
+            _pii << len;
+            _pii << packIn;
+            return *this;
+        }
+
+        TC_PackIn& writeBlockWithShortLen(const std::function<void(TC_PackIn&)>& block, short lenOffset = 0)
+        {
+            TC_PackIn packIn;
+            block(packIn);
+            auto len = (short) (lenOffset + packIn.length());
+            _pii << len;
+            _pii << packIn;
+            return *this;
+        }
+
         /**
          * @brief
          *
@@ -348,7 +377,6 @@ namespace tars
         {
             return TC_PackInInner(this, false, nPos);
         }
-
     protected:
 
         /**

@@ -1,13 +1,15 @@
 #include "net/client.h"
 
+#include <string>
+
 using namespace uvw;
 
 namespace oicq {
     OicqClient::OicqClient(std::shared_ptr<Loop> loop) {
         auto tcp = loop->resource<TCPHandle>();
 
-        // loop->stop() 【尽快】结束当前循环，下一次可以继续开启
-        // loop->close() 释放该循环内所有资源
+        // loop->stop() [As soon as possible] End the current cycle, and you can continue to open it next time
+        // loop->close() Release all resources in the loop
 
         this->myLoop = loop;
         this->client = tcp;
@@ -15,12 +17,6 @@ namespace oicq {
 
     OicqClient::~OicqClient()  {
         this->close();
-    }
-
-    void OicqClient::write(const char *cmd, std::unique_ptr<char[]> data, unsigned int len) {
-
-
-
     }
 
     void OicqClient::init() {

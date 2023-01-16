@@ -190,8 +190,9 @@ namespace tars
 
     TC_PackIn::TC_PackInInner& TC_PackIn::TC_PackInInner::operator << (const char *sBuffer)
     {
-        _buffer.append(sBuffer, strlen(sBuffer) + 1);
-        // 会把0给copy进去
+        // _buffer.append(sBuffer, strlen(sBuffer) + 1);
+        // Why do you write that 0 in?
+        _buffer.append(sBuffer, strlen(sBuffer));
         return *this;
     }
 
@@ -202,7 +203,8 @@ namespace tars
 
     TC_PackIn::TC_PackInInner& TC_PackIn::TC_PackInInner::operator << (const string& sBuffer)
     {
-        uint32_t len = (uint32_t)sBuffer.length();
+        // You just write strings, but you write a length of dry wool in front?
+        /*uint32_t len = (uint32_t)sBuffer.length();
         if(len < 255)
         {
             unsigned char c = (unsigned char)len;
@@ -213,7 +215,7 @@ namespace tars
             unsigned char c = 255;
             (*this) << c;
             (*this) << len;
-        }
+        }*/
         _buffer.append(sBuffer);
         return *this;
     }
