@@ -53,16 +53,6 @@ int64_t TC_Common::TimezoneHelper::timezone_diff_secs = 0;
 
 TC_Common::TimezoneHelper TC_Common::_TimeZoneHelper;
 
-void TC_Common::sleep(uint32_t sec)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(sec));
-}
-
-void TC_Common::msleep(uint32_t ms)
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}
-
 bool TC_Common::equal(double x, double y, double epsilon)
 {
     return fabs(x - y) < epsilon;

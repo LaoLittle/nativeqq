@@ -1,14 +1,14 @@
 #include "net/client.h"
 
+#include <string>
+
 using namespace uvw;
 
 namespace oicq {
     OicqClient::OicqClient(std::shared_ptr<Loop> loop) {
         auto tcp = loop->resource<TCPHandle>();
-
-        // loop->stop() 【尽快】结束当前循环，下一次可以继续开启
-        // loop->close() 释放该循环内所有资源
-
+        // loop->stop() [As soon as possible] End the current cycle, and you can continue to open it next time
+        // loop->close() Release all resources in the loop
         this->myLoop = loop;
         this->client = tcp;
     }
@@ -21,19 +21,6 @@ namespace oicq {
         client->noDelay(true);
         client->keepAlive(true, TCPHandle::Time{128});
         client->simultaneousAccepts();
-
-        client->on<ErrorEvent>([](const ErrorEvent&, TCPHandle &) {
-
-        });
-        client->on<CloseEvent>([](const CloseEvent&, TCPHandle &) {
-
-        });
-        client->on<EndEvent>([](const EndEvent&, TCPHandle &sock) {
-
-        });
-        client->once<WriteEvent>([](const WriteEvent&, TCPHandle &handle) {
-
-        });
 
         // TODO(waiting for a heartbeat)
         _timeout_timer = myLoop->resource<TimerHandle>();

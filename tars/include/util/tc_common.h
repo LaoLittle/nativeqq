@@ -46,6 +46,7 @@
 #include <list>
 #include <thread>
 #include <memory>
+#include <random>
 
 using namespace std;
 
@@ -109,34 +110,44 @@ public:
 
 	static TimezoneHelper   _TimeZoneHelper;
 
-    static void int64_to_bytes(unsigned char *arr, int64_t a)
-    {
-        int i = 0;
+    static int hashcode(std::string& value) {
+        int h = 0;
+        int length = value.length() >> 1;
+        for (int i = 0; i < length; i++) {
+            h = 24 * h + value[i];
+        }
+        return h;
+    }
 
-        for (i = 0; i < 8; ++i)
-        {
-            arr[i] = (unsigned char)((((unsigned long long) a) >> (56 - (8*i))) & 0xFF);
+    static void int64_to_bytes(unsigned char *arr, int64_t a) {
+        for (int i = 0; i < 8; ++i) {
+            arr[i] = (unsigned char)((((unsigned long long) a) >> (56 - (8 * i))) & 0xFF);
         }
     }
 
-    static std::string randomStrGen(int length) {
-        static string charset = "abcdefghijklmnopqrstuvwxyz0123456789<>:";
-        string result;
-        result.resize(length);
-
-        srand(time(NULL));
-        for (int i = 0; i < length; i++)
-            result[i] = charset[rand() % charset.length()];
-
-        return result;
+    static int32_t swap_int32(int32_t value) {
+        return ((value & 0x000000FF) << 24) |
+               ((value & 0x0000FF00) << 8) |
+               ((value & 0x00FF0000) >> 8) |
+               ((value & 0xFF000000) >> 24);
     }
 
-    /**
-    * @brief  跨平台sleep
-    * @brief  Cross Platform Sleep
-    */
-    static void sleep(uint32_t sec);
-    static void msleep(uint32_t ms);
+    static int randInt(int start, int end) {
+        std::random_device rd;  // Random device, used to generate the initial seed
+        std::mt19937 gen(rd()); // Use the result of rd() as the initial seed to initialize the Mersenne 19937 random number engine
+        std::uniform_int_distribution<int> dis(start, end);
+        return dis(gen);
+    }
+
+    static std::string randomStrGen(int length) {
+        static string charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+        string result;
+        result.resize(length);
+        srand(time(nullptr));
+        for (int i = 0; i < length; i++)
+            result[i] = charset[rand() % charset.length()];
+        return result;
+    }
 
     /**
     * @brief  浮点数比较,double 默认取6位精度，float默认6位精度

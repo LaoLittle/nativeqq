@@ -4,6 +4,8 @@
 #include "functional"
 #include "uvw.hpp"
 
+#include "packet.h"
+
 /**
  * Whether to create a new loop for all subsequent oicq-clients
  */
@@ -31,7 +33,6 @@ namespace oicq {
         void runLoop() const {
             myLoop->run();
         }
-
     public:
         /**
          * initiate connect

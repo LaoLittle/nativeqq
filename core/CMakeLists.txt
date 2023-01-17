@@ -8,7 +8,6 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_library(${PROJECT_NAME} ${SOURCES})
 add_library(nativeqq::core ALIAS ${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} cppcoro)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} uvw::uvw)
 target_link_libraries(${PROJECT_NAME} httplib)
