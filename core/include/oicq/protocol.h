@@ -15,6 +15,9 @@ namespace oicq {
         long subAppId;
         std::string detail;
 
+        short ipVersion = 0;
+
+    public:
         ProtocolBase(ProtocolType type, long subAppId, std::string detail)
         : type(type), subAppId(subAppId), detail(detail) {
 

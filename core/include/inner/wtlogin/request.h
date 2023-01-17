@@ -11,11 +11,16 @@ namespace oicq::wtlogin {
     };
 
     class wt_request {
-        virtual void make_tlv(oicq::Oicq *oicq);
+        virtual void make_tlv(tars::TC_PackIn& pack, oicq::Oicq *oicq);
 
         virtual oicq::PacketType get_packet_type();
 
-        void build_encrypt_head(tars::TC_PackIn pack, std::shared_ptr<char[]> randomKey, int ecdh_version);
+        void build_encrypt_head(
+                tars::TC_PackIn& pack, std::shared_ptr<char[]> randomKey, int ecdh_version,
+                bool need_rollback = false, int rollback_flag = 0
+        );
+
+        void build_encrypt_data(tars::TC_PackIn& pack, oicq::Oicq* oicq);
     public:
         wt_request(std::string cmd, int cmdId, int subCmd): cmd(cmd), cmdId(cmdId), subCmd(subCmd) {
             assert(!cmd.empty());
@@ -37,7 +42,9 @@ namespace oicq::wtlogin {
 
     // password login
     class wtlogin09: public wt_request {
-        void make_tlv(oicq::Oicq *oicq);
+        void make_tlv(tars::TC_PackIn& pack, oicq::Oicq *oicq) {
+
+        }
     };
 }
 

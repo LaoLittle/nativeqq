@@ -157,7 +157,7 @@ namespace oicq {
                             dataPacker.write(userData.session.getSession().get(), 4);
                         } // cmd & session
                         {
-                            auto deviceId = device->getDeviceId();
+                            auto& deviceId = device->getDeviceId();
                             auto len = deviceId.length();
                             dataPacker << len + 4;
                             if (len != 0) {
@@ -165,11 +165,10 @@ namespace oicq {
                             }
                         } // deviceId
                         {
-                            unsigned int len = userData.session.ksidLen;
-                            dataPacker << len + 4;
-                            if (len != 0) {
-                                auto ksid = userData.session.ksid;
-                                dataPacker.write(ksid.get(), len);
+                            auto& ksid = userData.session.ksid;
+                            dataPacker << ksid.size + 4;
+                            if (!ksid.empty()) {
+                                dataPacker.write(ksid.ticket.get(), ksid.size);
                             }
                         } // ksid
                         {
