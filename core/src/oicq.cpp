@@ -24,6 +24,7 @@ namespace oicq {
         auto loop = Loop::create();
 #endif
         this->defaultLoop = loop;
+        this->packetHandler = std::make_shared<PacketHandler>(loop);
     }
 
     Oicq::~Oicq() {
@@ -90,13 +91,11 @@ namespace oicq {
                 toService->type = PacketType::LoginPacket;
             }
         }
-        SPDLOG_INFO("Send ToService(uin={}, cmd={}, seq={}, len={})",
-                    userData.uin, toService->cmd, toService->seq, toService->dataLen);
         TC_PackIn packIn;
         packIn.writeBlockWithIntLen([&](TC_PackIn& packer){
             packer << getFlag1ByPacketType(toService->type);
             packer << getFlag2ByPacketType(toService->type);
-            { // c
+            {
                 if (toService->type == PacketType::ServicePacket ||
                     toService->type == PacketType::ExchangeSig) {
                     packer << toService->seq;
@@ -213,7 +212,10 @@ namespace oicq {
                 packer << data;
             }
         }, 4);
-        client->getTcpHandle()->tryWrite((char*) packIn.topacket().c_str(), packIn.length());
+
+        int result = client->getTcpHandle()->tryWrite((char *)packIn.topacket().c_str(), packIn.length());
+        SPDLOG_INFO("Send ToService(result={}, uin={}, cmd={}, seq={}, len={})",
+                    result, userData.uin, toService->cmd, toService->seq, packIn.length());
     }
 
     int getFlag1ByPacketType(PacketType type) {

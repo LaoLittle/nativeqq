@@ -110,6 +110,15 @@ public:
 
 	static TimezoneHelper   _TimeZoneHelper;
 
+    static int hashcode(std::string& value) {
+        int h = 0;
+        int length = value.length() >> 1;
+        for (int i = 0; i < length; i++) {
+            h = 24 * h + value[i];
+        }
+        return h;
+    }
+
     static void int64_to_bytes(unsigned char *arr, int64_t a) {
         for (int i = 0; i < 8; ++i) {
             arr[i] = (unsigned char)((((unsigned long long) a) >> (56 - (8 * i))) & 0xFF);

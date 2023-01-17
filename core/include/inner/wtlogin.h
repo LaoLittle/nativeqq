@@ -9,7 +9,8 @@ namespace oicq {
     class Oicq; // advance declaration of existence
 
     enum class StMode: std::uint8_t {
-        GetStByPassword = 1
+        GetStByPassword = 1,
+
     };
 
     /**
@@ -24,8 +25,6 @@ namespace oicq {
         void run(oicq::StMode mode);
     public:
         WloginHelper(oicq::Oicq *_oicq);
-
-//        ~WloginHelper();
 
         void login(oicq::StMode mode);
     };

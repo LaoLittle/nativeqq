@@ -45,6 +45,8 @@ namespace oicq {
         std::unique_ptr<char[]> data;
         unsigned int dataLen;
     };
+
+
 }
 
 #endif //NATIVEQQ_PACKET_H

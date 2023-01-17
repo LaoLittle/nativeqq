@@ -17,6 +17,8 @@ namespace oicq {
      * Ecdh is not fully realized for the time being, which is of little significance
      */
     struct EcdhCrypt {
+        int ecdh_version = 1;
+
         std::string public_key = tars::TC_Common::str2bin(
                 "046fd49cf178a75ec9987070eccd72823cf482df9d4935cc55e3fc59f97999b634e92945c583d61b682a8c83ee221986d26a8ccdd05ae7ed8894d989d0e1beda17"
         );

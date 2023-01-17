@@ -6,6 +6,7 @@
 #include "inner/wtlogin.h"
 #include "net/packet.h"
 #include "net/client.h"
+#include "net/waiter.h"
 #include "protocol.h"
 
 namespace oicq {
@@ -44,7 +45,6 @@ namespace oicq {
         void getStByPwd(long uin, std::string pwdMd5);
 
         void sendPacket(std::unique_ptr<oicq::ToService> toService);
-
     public:/*
          * Although I made these things public, I don't really recommend that you modify them.
          */
@@ -68,12 +68,14 @@ namespace oicq {
          * OicqClient Status
          */
         OicqState state = OicqState::NoLogin;
-
         /**
          * Do not ask
          */
         std::shared_ptr<oicq::WloginHelper> wtloginHelper;
-
+        /**
+         * Packet handler
+         */
+        std::shared_ptr<oicq::PacketHandler> packetHandler;
     protected:
         /**
          * All thread tasks are created here.
