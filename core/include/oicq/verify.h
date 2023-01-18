@@ -1,0 +1,4 @@
+#ifndef NATIVEQQ_VERIFY_H
+#define NATIVEQQ_VERIFY_H
+
+#endif //NATIVEQQ_VERIFY_H

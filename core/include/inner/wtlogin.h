@@ -8,7 +8,7 @@
 namespace oicq {
     class Oicq; // advance declaration of existence
 
-    enum class StMode: std::uint8_t {
+    enum class StMode: std::int8_t {
         GetStByPassword = 1,
 
     };

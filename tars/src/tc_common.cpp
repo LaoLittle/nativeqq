@@ -646,6 +646,15 @@ string TC_Common::nowtime2str()
     return now2str("%H%M%S");
 }
 
+int32_t TC_Common::now2s()
+{
+    struct timeval tv;
+
+    TC_Common::gettimeofday(tv);
+
+    return tv.tv_sec;
+}
+
 int64_t TC_Common::now2ms()
 {
     struct timeval tv;

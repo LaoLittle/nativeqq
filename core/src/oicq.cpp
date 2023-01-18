@@ -35,7 +35,7 @@ namespace oicq {
         });
     }
 
-    void Oicq::getStByPwd(long uin, std::string pwd) {
+    void Oicq::getStByPwd(unsigned int uin, std::string pwd) {
         SPDLOG_INFO("Start pre login!");
         if (this->protocolType == ProtocolType::Non) {
             // How can it run without setting the protocol type?
@@ -55,12 +55,20 @@ namespace oicq {
                     this->defaultLoop
             ); // By creating a smart pointer, the previous client will be automatically released (when reference == 0)
             uvw::Addr addr;
-            if (oicq::OICQ_Common::get_oicq_address(&addr, uin, this->device->imei, this->protocol->subAppId, "") == 200) {
+            if (oicq::OICQ_Common::get_oicq_address(&addr, uin, this->device->deviceId, this->protocol->subAppId, "") == 200) {
                 auto handle = this->client->getTcpHandle();
                 // SPDLOG_INFO("Thread(Oicq::getStByPwd) {}", uv_thread_self()); // Only to test which the thread is.
-                this->userData.uin = uin;
-                this->userData.name = to_string(uin);
-                this->userData.pwdMd5 = std::move(tars::TC_MD5::md5bin(pwd)); // Will this be a problem?
+                {
+                    auto pwdMd5 = tars::TC_MD5::md5bin(pwd);
+                    this->userData.uin = uin;
+                    this->userData.name = to_string(uin);
+                    this->userData.pwdMd5 = pwdMd5; // Will this be a problem?
+                    tars::TC_PackIn tmp;
+                    tmp.write(pwdMd5.data(), 16);
+                    tmp << 0;
+                    tmp << (unsigned int) uin;
+                    this->userData.userMd5 = tars::TC_MD5::md5bin(tmp.topacket());
+                } // init userdata
                 handle->once<ConnectEvent>([&, this](const ConnectEvent &, TCPHandle &handle) {
                     SPDLOG_INFO("Successfully connected to the server({}:{}).", addr.ip, addr.port); // Why is it a yellow warning?
                     auto wlogin = std::make_shared<oicq::WloginHelper>(this);
@@ -135,8 +143,8 @@ namespace oicq {
                     case PacketType::FetchQRCode:
                     case PacketType::ExchangeSt: {
                         dataPacker << toService->seq;
-                        dataPacker << (uint32_t) (this->protocol->subAppId);
-                        dataPacker << (uint32_t) (this->protocol->subAppId);
+                        dataPacker << (unsigned int) (this->protocol->subAppId);
+                        dataPacker << (unsigned int) (this->protocol->subAppId);
                         auto subNet = TC_Common::swap_int32(device->getSubNetType());
                         dataPacker << subNet;
                         dataPacker << 0;
@@ -157,7 +165,7 @@ namespace oicq {
                             dataPacker.write(userData.session.getSession().get(), 4);
                         } // cmd & session
                         {
-                            auto deviceId = device->getDeviceId();
+                            auto& deviceId = device->getDeviceId();
                             auto len = deviceId.length();
                             dataPacker << len + 4;
                             if (len != 0) {
@@ -165,11 +173,10 @@ namespace oicq {
                             }
                         } // deviceId
                         {
-                            unsigned int len = userData.session.ksidLen;
-                            dataPacker << len + 4;
-                            if (len != 0) {
-                                auto ksid = userData.session.ksid;
-                                dataPacker.write(ksid.get(), len);
+                            auto& ksid = userData.session.ksid;
+                            dataPacker << ksid.size + 4;
+                            if (!ksid.empty()) {
+                                dataPacker.write(ksid.ticket.get(), ksid.size);
                             }
                         } // ksid
                         {

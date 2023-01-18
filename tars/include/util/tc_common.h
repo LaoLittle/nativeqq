@@ -139,6 +139,12 @@ public:
         return dis(gen);
     }
 
+    static void randomBytes(char* bytes, size_t size) {
+        for(int i = 0;i < size; i++) {
+            bytes[i] = (char) rand();
+        }
+    }
+
     static std::string randomStrGen(int length) {
         static string charset = "abcdefghijklmnopqrstuvwxyz0123456789";
         string result;
@@ -461,6 +467,15 @@ public:
     * @return string time string in (%H%M%S) format
     */
     static string nowtime2str();
+
+    /**
+     * @brief  获取当前时间的的秒数.
+     * @brief  Get the value of seconds of current time.
+     *
+     * @return int32_t 当前时间的的毫秒数
+     * @return int32_t current seconds of this time
+     */
+    static int32_t now2s();
 
     /**
      * @brief  获取当前时间的的毫秒数.

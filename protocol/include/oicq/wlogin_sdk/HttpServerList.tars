@@ -19,7 +19,7 @@ module oicq {
         4  require string         imsi;
         5  require int       netType;
         6  require long       appId;
-        7  require string imei;
+        7  require string deviceId;
         8  require long          cellid     = 0;
         9  require long o = 0;
         10  require long oo = 0;
