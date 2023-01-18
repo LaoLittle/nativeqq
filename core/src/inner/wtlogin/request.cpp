@@ -1,5 +1,7 @@
 #include "inner/wtlogin/request.h"
 
+#include <util/tc_tea.h>
+
 #include <spdlog/spdlog.h>
 
 namespace oicq::wtlogin {
@@ -56,7 +58,43 @@ namespace oicq::wtlogin {
 
         tars::TC_PackIn bodyPack;
         bodyPack << (short) (this->subCmd);
+        make_tlv(bodyPack, oicq);
+        std::shared_ptr<char[]> teaKey;
+        if (encryptMethod == EncryptMethod::EM_ST) {
+            teaKey = userData.sigInfo.wtSessionTicketKey;
+        } else if (encryptMethod == EncryptMethod::EM_ECDH) {
+            teaKey = ecdh.share_key;
+        } else if (encryptMethod == EncryptMethod::EM_RB) {
+            teaKey = session.randomKey;
+        }
+        auto encrypt = tars::TC_Tea::encrypt(teaKey.get(), bodyPack.topacket().data(), bodyPack.length());
+        pack.write(encrypt.data(), encrypt.size());
+    }
 
+    tars::TC_PackIn wt_request::build_body_data(oicq::Oicq *oicq) {
+        tars::TC_PackIn encrypt;
+        build_encrypt_data(encrypt, oicq);
+
+        tars::TC_PackIn pack;
+        pack << (char) (2);
+        pack << (short) (27 + encrypt.length() + 2);
+        pack << (short) (8001);
+        pack << (short) (cmdId);
+        pack << (short) (1);
+        pack << oicq->userData.uin;
+
+        pack << (char) (3);
+        pack << (char) (encType);
+        pack << (char) (0);
+        pack << (int) (2);
+        pack << (int) (0);
+        pack << (int) (0);
+
+        pack << encrypt;
+
+        pack << (char) (3);
+
+        return pack;
     }
 
     oicq::PacketType wt_request::get_packet_type() {
@@ -67,7 +105,16 @@ namespace oicq::wtlogin {
         auto to = std::make_unique<ToService>();
         to->cmd = this->cmd;
         to->seq = oicq->userData.session.nextSeq();
+        this->seq = to->seq;
+        auto body = build_body_data(oicq);
+        to->dataLen = body.length();
+        to->data.reset(body.topacket().data());
 
+        to->firstToken = this->firstToken.ticket;
+        to->firstTokenLen = this->firstToken.size;
+        to->secondToken = this->secondToken.ticket;
+        to->secondToken = this->secondToken.size;
 
+        oicq->sendPacket(std::move(to));
     }
 }

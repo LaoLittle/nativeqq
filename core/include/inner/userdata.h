@@ -10,6 +10,14 @@
 #include "util/tc_common.h"
 
 namespace oicq {
+    struct LoginExtraData {
+        unsigned int uin;
+        std::shared_ptr<char[]> ip;
+        char size = 0;
+        unsigned int time;
+        unsigned int appId;
+    };
+
     struct Ticket {
         std::shared_ptr<char[]> ticket;
         unsigned int size = 0;
@@ -68,6 +76,8 @@ namespace oicq {
 
         Ticket wtSessionTicket;
         std::shared_ptr<char[]> wtSessionTicketKey; // Size is definitely 16
+
+        std::vector<LoginExtraData> vector;
     };
 
     struct UserData {
@@ -76,6 +86,7 @@ namespace oicq {
         std::string name;
         unsigned int uin; // QQ num
         std::vector<char> pwdMd5; // md5 of password
+        std::vector<char> userMd5; // md5 of (password & uin)
 
         Session session;
         SigInfo sigInfo;

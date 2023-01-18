@@ -42,7 +42,7 @@ namespace oicq {
          * @param uin
          * @param pwdMd5
          */
-        void getStByPwd(long uin, std::string pwdMd5);
+        void getStByPwd(unsigned int uin, std::string pwdMd5);
 
         void sendPacket(std::unique_ptr<oicq::ToService> toService);
     public:/*

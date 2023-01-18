@@ -4,6 +4,7 @@
 #include <inner/wtlogin/request.h>
 #include <net/packet.h>
 
+#include <inner/wtlogin/request/wtlogin09.h>
 #include "spdlog/spdlog.h"
 
 namespace oicq {
@@ -34,7 +35,8 @@ namespace oicq {
         //SPDLOG_INFO("Thread(WloginHelper::login) {}", uv_thread_self());
         SPDLOG_INFO("Login service is enabled, mode: {}", (uint8_t) mode);
         if (mode == StMode::GetStByPassword) {
-
+            wtlogin::wtlogin09 wtlogin09;
+            wtlogin09.build(oicq);
         } // mode == StMode::GetStByPassword
     }
 

@@ -15,6 +15,8 @@ namespace oicq::wtlogin {
 
         virtual oicq::PacketType get_packet_type();
 
+        tars::TC_PackIn build_body_data(oicq::Oicq *oicq);
+
         void build_encrypt_head(
                 tars::TC_PackIn& pack, std::shared_ptr<char[]> randomKey, int ecdh_version,
                 bool need_rollback = false, int rollback_flag = 0
@@ -31,20 +33,12 @@ namespace oicq::wtlogin {
         std::string cmd;
         int cmdId = 0;
         int subCmd = 0;
-        int encType = 0;
+        char encType = 0;
         EncryptMethod encryptMethod = EncryptMethod::EM_ECDH;
 
-        std::shared_ptr<char[]> firstToken;
-        unsigned int firstTokenLen = 0;
-        std::shared_ptr<char[]> secondToken;
-        unsigned int secondTokenLen = 0;
-    };
-
-    // password login
-    class wtlogin09: public wt_request {
-        void make_tlv(tars::TC_PackIn& pack, oicq::Oicq *oicq) {
-
-        }
+        int seq = 0;
+        oicq::Ticket firstToken;
+        oicq::Ticket secondToken;
     };
 }
 
